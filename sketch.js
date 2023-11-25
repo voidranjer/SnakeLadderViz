@@ -28,8 +28,8 @@ function draw() {
     cell.drawOverlay();
   }
 
-  Cell.drawSearchPath();
   Cell.drawShortcuts();
+  Cell.drawSearchPath();
 }
 
 function mouseClicked() {
