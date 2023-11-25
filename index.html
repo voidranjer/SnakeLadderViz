@@ -3,16 +3,24 @@
   <head>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.8.0/p5.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.8.0/addons/p5.sound.min.js"></script>
-    <link rel="stylesheet" type="text/css" href="style.css">
+    <link rel="stylesheet" type="text/css" href="style.css" />
     <meta charset="utf-8" />
-
   </head>
-  <body>
-    <main>
-    </main>
+  <body onload="init()">
+    <main></main>
+    <div class="sidebar">
+      <h2>Snakes and Ladders</h2>
+      <p>COMP 2402 – Fall 2023 A5 (Part 2)</p>
+      <div id="textAreaContainer">
+        <label for="myTextArea">Infile:</label>
+        <textarea id="myTextArea" rows="8"></textarea>
+      </div>
+      <button id="submitBtn">Submit</button>
+      <p>To reset, refresh the page (for now). Work in progress!</p>
+    </div>
+    <script src="init.js"></script>
     <script src="cell.js"></script>
     <script src="drawing.js"></script>
-    <script src="lib.js"></script>
     <script src="sketch.js"></script>
   </body>
 </html>

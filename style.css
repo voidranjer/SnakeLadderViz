@@ -1,7 +1,37 @@
-html, body {
+html,
+body {
   margin: 0;
   padding: 0;
 }
 canvas {
   display: block;
+}
+
+.sidebar {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 200px;
+  height: 100%;
+  background-color: #f1f1f1;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+#textAreaContainer {
+  margin-bottom: 20px;
+}
+
+#submitBtn {
+  width: 100%;
+  padding: 10px;
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+#submitBtn:hover {
+  background-color: #45a049;
 }

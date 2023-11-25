@@ -6,3 +6,5 @@ Use localstorage to store hasRickrolled as to not spam the user
 
 scale ladder width etc with grid size
 hide ladder when hovering valid
+
+load from file
