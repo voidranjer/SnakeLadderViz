@@ -56,31 +56,41 @@ class Cell {
     const hoveredCell = cells[Cell.hoveredIndex];
     const lastCell = cells[Cell.searchPath[Cell.searchPath.length - 1]];
 
-    // Draw next indicators from hovered cell if hovered cell is a valid next pos
+    // If currently hovering over a valid next position:
     if (Cell.validNexts.includes(Cell.hoveredIndex)) {
+      cursor("pointer");
+
+      // Draw next indicators from hovered cell if hovered cell is a valid next pos
       hoveredCell.drawOutgoingArrows();
+
+      // Draw connection line from latest cell to hovered cell
       drawArrowWithTip(lastCell.centerX, lastCell.centerY, hoveredCell.centerX, hoveredCell.centerY, "blue", 5);
+
+      // Hover animations
+      fill(0, 0, 0, 50);
+      square(hoveredCell.x, hoveredCell.y, hoveredCell.squareWidth);
     }
 
     // Otherwise, default to drawing next indicators from latest cell in search path
-    else lastCell.drawOutgoingArrows();
+    else {
+      cursor("default");
+      lastCell.drawOutgoingArrows();
+    }
 
     // Draw valid nexts
-    beginShape();
     for (let index of Cell.validNexts) {
       const { centerX, centerY } = cells[index];
 
       stroke("black");
       strokeWeight(1);
       fill("cyan");
-      // fill(index > Cell.hoveredIndex ? "cyan" : "blue");
+
       if (index == Cell.hoveredIndex) {
         strokeWeight(3);
         stroke("blue");
       }
       circle(centerX, centerY, 25);
     }
-    endShape();
 
     // Draw search path
     stroke("blue");
@@ -96,6 +106,10 @@ class Cell {
 
     // Stop drawing floating line if the newest cell is the last cell
     if (Cell.searchPath[Cell.searchPath.length - 1] == N * N) {
+      // window.alert("Well done! You get a candy :>");
+      window.open("https://www.youtube.com/watch?v=dQw4w9WgXcQ?autoplay=1&mute=1", "_blank");
+      Cell.searchPath = [1];
+      Cell.updateValidNexts();
       return;
     }
 
@@ -121,7 +135,7 @@ class Cell {
 
     // This cell is already in the search path and it's not the last element
     if (Cell.searchPath.includes(this.index)) {
-      window.alert("Naughty boy!");
+      window.alert("Naughty naughty! What are you trying to do?");
       return;
     }
 
@@ -189,24 +203,9 @@ class Cell {
     stroke("black");
     fill("white");
 
-    // Applies to the hovered cell only
-    if (this.isHovering()) {
-      // Cursor
-      if (this.isValidNextPosition()) cursor(HAND);
-      else cursor(CROSS);
-
-      Cell.hoveredIndex = this.index;
-    }
-
-    // No longer hovering: reset hoveredIndex
-    else {
-      if (this.index == Cell.hoveredIndex) Cell.hoveredIndex = -1;
-    }
-
-    if (this.clickedOnce || (this.isValidNextPosition() && this.isHovering())) {
-      stroke("blue");
-      fill("lightgray");
-    }
+    // Set/unset hovered index
+    if (this.isHovering()) Cell.hoveredIndex = this.index;
+    else if (this.index == Cell.hoveredIndex) Cell.hoveredIndex = -1;
 
     // Color first and last cells special
     if (this.index == 1 || this.index == N * N) fill("magenta");
@@ -229,6 +228,14 @@ class Cell {
 
   drawOverlay() {
     this.drawShortcuts();
+
+    // Visited cells
+    if (this.clickedOnce) {
+      fill("blue");
+      circle(this.centerX, this.centerY, 25);
+      noFill();
+    }
+
     // if (Cell.searchPath.length == 1) {
     //   this.drawNextArrow();
     // if (this.isHovering()) this.drawOutgoingArrows();
