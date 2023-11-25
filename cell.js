@@ -1,5 +1,6 @@
 class Cell {
   static searchPath = [1];
+  static hoveredIndex = 1;
 
   constructor(index) {
     this.index = index;
@@ -14,6 +15,8 @@ class Cell {
 
     this.centerX = this.x + this.squareWidth / 2;
     this.centerY = this.y + this.squareWidth / 2;
+
+    this.clickedOnce = false;
   }
 
   static indexToIJ(index) {
@@ -41,11 +44,29 @@ class Cell {
       vertex(centerX, centerY);
     }
 
-    // Only draw floating line if the newest cell is not the last cell
-    if (!(Cell.searchPath[Cell.searchPath.length - 1] == N * N)) {
-      vertex(mouseX, mouseY);
+    // Stop drawing floating line if the newest cell is the last cell
+    if (Cell.searchPath[Cell.searchPath.length - 1] == N * N) {
+      endShape();
+      strokeWeight(1);
+      return;
     }
 
+    // Only draw floating line if the newest cell is not the last cell
+    // if (Cell.searchPath.length > 0) {
+    //   const searchPathClone = [...Cell.searchPath];
+    //   const lastCell = searchPathClone[searchPathClone.length - 1];
+
+    //   // Follow proper search path shape
+    //   let currIndex = lastCell.index;
+    //   while (currIndex < Cell.hoveredIndex) {
+    //     if (currIndex > Cell.hoveredIndex) currIndex--;
+    //     else currIndex++;
+    //     vertex(cells[currIndex].centerX, cells[currIndex].centerY);
+    //   }
+
+    // }
+
+    vertex(mouseX, mouseY);
     endShape();
     strokeWeight(1);
   }
@@ -53,6 +74,9 @@ class Cell {
   handleClick() {
     // Targets only the cell being hovered (other cells should not execute this function)
     if (!this.isHovering()) return;
+
+    // Highlight the cell
+    this.clickedOnce = true;
 
     // This cell is already in the search path and it's not the last element
     if (Cell.searchPath.includes(this.index)) {
@@ -137,12 +161,16 @@ class Cell {
       fill("lightgray");
     }
 
+    // Applies to the hovered cell only
     if (this.isHovering()) {
+      // Cursor
       if (this.isValidNextPosition()) cursor(HAND);
       else cursor(CROSS);
+
+      Cell.hoveredIndex = this.index;
     }
 
-    if (this.isInSearchPath() || (this.isValidNextPosition() && this.isHovering())) {
+    if (this.clickedOnce || (this.isValidNextPosition() && this.isHovering())) {
       stroke("blue");
       fill("gray");
     }
