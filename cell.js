@@ -1,5 +1,6 @@
 class Cell {
   static searchPath = [1];
+  static validNexts = [];
   static hoveredIndex = 1;
 
   constructor(index) {
@@ -51,22 +52,17 @@ class Cell {
       return;
     }
 
-    // Only draw floating line if the newest cell is not the last cell
-    // if (Cell.searchPath.length > 0) {
-    //   const searchPathClone = [...Cell.searchPath];
-    //   const lastCell = searchPathClone[searchPathClone.length - 1];
+    // Follow proper search path shape
+    const lastCell = cells[Cell.searchPath[Cell.searchPath.length - 1]];
+    let currentIndex = lastCell.index;
+    while (currentIndex != Cell.hoveredIndex) {
+      if (currentIndex > Cell.hoveredIndex) currentIndex--;
+      else currentIndex++;
+      const { centerX, centerY } = cells[currentIndex];
+      vertex(centerX, centerY);
+    }
 
-    //   // Follow proper search path shape
-    //   let currIndex = lastCell.index;
-    //   while (currIndex < Cell.hoveredIndex) {
-    //     if (currIndex > Cell.hoveredIndex) currIndex--;
-    //     else currIndex++;
-    //     vertex(cells[currIndex].centerX, cells[currIndex].centerY);
-    //   }
-
-    // }
-
-    vertex(mouseX, mouseY);
+    // vertex(mouseX, mouseY);
     endShape();
     strokeWeight(1);
   }
@@ -76,7 +72,7 @@ class Cell {
     if (!this.isHovering()) return;
 
     // Highlight the cell
-    this.clickedOnce = true;
+    if (!Cell.searchPath.includes(this.index)) this.clickedOnce = true;
 
     // This cell is already in the search path and it's not the last element
     if (Cell.searchPath.includes(this.index)) {
@@ -92,9 +88,9 @@ class Cell {
 
     // No ladder/snake, just a normal move
     else {
+      // Follow proper search path shape
       const lastCell = cells[Cell.searchPath[Cell.searchPath.length - 1]];
       let currentIndex = lastCell.index;
-      // Follow proper search path shape
       while (currentIndex != this.index) {
         if (currentIndex > this.index) currentIndex--;
         else currentIndex++;
@@ -139,7 +135,7 @@ class Cell {
   drawNextArrow() {
     if (this.index == N * N) return;
     const destCell = cells[this.index + 1];
-    drawArrowWithTip(this.centerX, this.centerY, destCell.centerX, destCell.centerY, "blue", 10);
+    drawArrowWithTip(this.centerX, this.centerY, destCell.centerX, destCell.centerY, "blue", 5);
   }
 
   drawOutgoingArrows() {
@@ -149,7 +145,7 @@ class Cell {
 
       const destCell = cells[destIndex];
 
-      drawArrowWithTip(this.centerX, this.centerY, destCell.centerX, destCell.centerY, "green");
+      drawArrowWithTip(this.centerX, this.centerY, destCell.centerX, destCell.centerY, "green", 5);
     }
   }
 
