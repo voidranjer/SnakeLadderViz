@@ -8,3 +8,4 @@ scale ladder width etc with grid size
 hide ladder when hovering valid
 
 load from file
+input validation

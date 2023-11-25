@@ -39,7 +39,7 @@ function loadInfile() {
   const pairsObject = {};
 
   // Loop through the remaining lines to extract pairs
-  for (let i = 1; i <= n; i++) {
+  for (let i = 1; i < lines.length; i++) {
     // Split each line into two numbers
     const [key, value] = lines[i].trim().split(" ").map(Number);
 
