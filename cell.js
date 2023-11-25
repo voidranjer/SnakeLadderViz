@@ -1,7 +1,7 @@
 class Cell {
   static searchPath = [1];
   static validNexts = [];
-  static hoveredIndex = 1;
+  static hoveredIndex = -1;
 
   constructor(index) {
     this.index = index;
@@ -18,6 +18,9 @@ class Cell {
     this.centerY = this.y + this.squareWidth / 2;
 
     this.clickedOnce = false;
+
+    // Initialize valid nexts
+    if (Cell.searchPath.length == 1) Cell.updateValidNexts();
   }
 
   static indexToIJ(index) {
@@ -33,38 +36,68 @@ class Cell {
     return { i, j };
   }
 
+  static updateValidNexts() {
+    if (Cell.searchPath.length == 0) return;
+
+    const newValidNexts = [];
+    for (let i = 1; i <= 6; i++) {
+      const targetIndex = Cell.searchPath[Cell.searchPath.length - 1] + i;
+      if (targetIndex <= N * N) newValidNexts.push(targetIndex);
+      // Account for ladders/snakes
+      // if (targetIndex in infile && this.index == infile[targetIndex]) return true;
+    }
+
+    Cell.validNexts = newValidNexts;
+  }
+
   static drawSearchPath() {
     if (Cell.searchPath.length == 0) return;
 
+    // Draw valid nexts
+    beginShape();
+    for (let index of Cell.validNexts) {
+      const { centerX, centerY } = cells[index];
+
+      stroke("black");
+      strokeWeight(1);
+      fill("cyan");
+      // fill(index > Cell.hoveredIndex ? "cyan" : "blue");
+      if (index == Cell.hoveredIndex) {
+        strokeWeight(3);
+        stroke("blue");
+      }
+      circle(centerX, centerY, 25);
+    }
+    endShape();
+
+    // Draw search path
     stroke("blue");
-    strokeWeight(5);
     noFill();
     beginShape();
     for (let index of Cell.searchPath) {
+      strokeWeight(3);
       const { centerX, centerY } = cells[index];
       vertex(centerX, centerY);
     }
+    endShape();
+    strokeWeight(1);
 
     // Stop drawing floating line if the newest cell is the last cell
     if (Cell.searchPath[Cell.searchPath.length - 1] == N * N) {
-      endShape();
-      strokeWeight(1);
       return;
     }
 
     // Follow proper search path shape
-    const lastCell = cells[Cell.searchPath[Cell.searchPath.length - 1]];
-    let currentIndex = lastCell.index;
-    while (currentIndex != Cell.hoveredIndex) {
-      if (currentIndex > Cell.hoveredIndex) currentIndex--;
-      else currentIndex++;
-      const { centerX, centerY } = cells[currentIndex];
-      vertex(centerX, centerY);
-    }
-
-    // vertex(mouseX, mouseY);
-    endShape();
-    strokeWeight(1);
+    // beginShape();
+    // let currentIndex = Cell.searchPath[Cell.searchPath.length - 1];
+    // while (currentIndex != Cell.hoveredIndex) {
+    //   if (currentIndex > Cell.hoveredIndex) currentIndex--;
+    //   else currentIndex++;
+    //   const { centerX, centerY } = cells[currentIndex];
+    //   vertex(centerX, centerY);
+    // }
+    // // vertex(mouseX, mouseY);
+    // endShape();
   }
 
   handleClick() {
@@ -89,14 +122,15 @@ class Cell {
     // No ladder/snake, just a normal move
     else {
       // Follow proper search path shape
-      const lastCell = cells[Cell.searchPath[Cell.searchPath.length - 1]];
-      let currentIndex = lastCell.index;
+      let currentIndex = Cell.searchPath[Cell.searchPath.length - 1];
       while (currentIndex != this.index) {
         if (currentIndex > this.index) currentIndex--;
         else currentIndex++;
         Cell.searchPath.push(currentIndex);
       }
     }
+
+    Cell.updateValidNexts();
   }
 
   isHovering() {
@@ -108,17 +142,7 @@ class Cell {
   }
 
   isValidNextPosition() {
-    const lastCell = cells[Cell.searchPath[Cell.searchPath.length - 1]];
-
-    for (let i = 1; i <= 6; i++) {
-      const targetIndex = i + lastCell.index;
-      if (this.index == targetIndex) return true;
-
-      // Account for ladders/snakes
-      // if (targetIndex in infile && this.index == infile[targetIndex]) return true;
-    }
-
-    return false;
+    return Cell.validNexts.includes(this.index);
   }
 
   drawShortcuts() {
@@ -150,12 +174,8 @@ class Cell {
   }
 
   draw() {
-    stroke(0);
-    fill(255);
-
-    if (this.isValidNextPosition()) {
-      fill("lightgray");
-    }
+    stroke("black");
+    fill("white");
 
     // Applies to the hovered cell only
     if (this.isHovering()) {
@@ -166,9 +186,14 @@ class Cell {
       Cell.hoveredIndex = this.index;
     }
 
+    // No longer hovering: reset hoveredIndex
+    else {
+      if (this.index == Cell.hoveredIndex) Cell.hoveredIndex = -1;
+    }
+
     if (this.clickedOnce || (this.isValidNextPosition() && this.isHovering())) {
       stroke("blue");
-      fill("gray");
+      fill("lightgray");
     }
 
     // Color first and last cells special
@@ -192,13 +217,16 @@ class Cell {
 
   drawOverlay() {
     this.drawShortcuts();
-    if (Cell.searchPath.length == 1) {
-      this.drawNextArrow();
-      // if (this.isHovering()) this.drawOutgoingArrows();
-    }
+    // if (Cell.searchPath.length == 1) {
+    //   this.drawNextArrow();
+    // if (this.isHovering()) this.drawOutgoingArrows();
+    // }
 
-    // Draw outgoing arrows from newest position
-    // if (this.index == Cell.searchPath[Cell.searchPath.length - 1]) this.drawOutgoingArrows();
+    // Draw outgoing arrows from newest position in search path
+    if (this.index == Cell.searchPath[Cell.searchPath.length - 1]) {
+      // only if no other valid next positions are being hovered
+      if (Cell.hoveredIndex == -1 || !Cell.validNexts.includes(Cell.hoveredIndex)) this.drawOutgoingArrows();
+    }
 
     // Draw outgoing arrows on hovering valid next positions
     if (this.isValidNextPosition()) {
