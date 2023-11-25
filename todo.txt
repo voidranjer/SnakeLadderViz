@@ -1,0 +1,6 @@
+Revert to previous search path if clicking on a previous index
+Use actual graphics for snakes and ladders (or use different colors, at least)
+Undo button
+Reset function and reset button (auto reset after rickroll)
+Use localstorage to store hasRickrolled as to not spam the user
+

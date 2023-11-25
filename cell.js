@@ -141,8 +141,10 @@ class Cell {
 
     // We're taking a ladder/snake
     if (this.index in infile) {
+      const destIndex = infile[this.index];
+
       Cell.searchPath.push(this.index);
-      Cell.searchPath.push(infile[this.index]);
+      Cell.searchPath.push(destIndex);
     }
 
     // No ladder/snake, just a normal move
