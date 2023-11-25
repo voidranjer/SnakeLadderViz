@@ -53,6 +53,18 @@ class Cell {
   static drawSearchPath() {
     if (Cell.searchPath.length == 0) return;
 
+    const hoveredCell = cells[Cell.hoveredIndex];
+    const lastCell = cells[Cell.searchPath[Cell.searchPath.length - 1]];
+
+    // Draw next indicators from hovered cell if hovered cell is a valid next pos
+    if (Cell.validNexts.includes(Cell.hoveredIndex)) {
+      hoveredCell.drawOutgoingArrows();
+      drawArrowWithTip(lastCell.centerX, lastCell.centerY, hoveredCell.centerX, hoveredCell.centerY, "blue", 5);
+    }
+
+    // Otherwise, default to drawing next indicators from latest cell in search path
+    else lastCell.drawOutgoingArrows();
+
     // Draw valid nexts
     beginShape();
     for (let index of Cell.validNexts) {
@@ -221,16 +233,5 @@ class Cell {
     //   this.drawNextArrow();
     // if (this.isHovering()) this.drawOutgoingArrows();
     // }
-
-    // Draw outgoing arrows from newest position in search path
-    if (this.index == Cell.searchPath[Cell.searchPath.length - 1]) {
-      // only if no other valid next positions are being hovered
-      if (Cell.hoveredIndex == -1 || !Cell.validNexts.includes(Cell.hoveredIndex)) this.drawOutgoingArrows();
-    }
-
-    // Draw outgoing arrows on hovering valid next positions
-    if (this.isValidNextPosition()) {
-      if (this.isHovering()) this.drawOutgoingArrows();
-    }
   }
 }
