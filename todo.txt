@@ -4,3 +4,5 @@ Undo button
 Reset function and reset button (auto reset after rickroll)
 Use localstorage to store hasRickrolled as to not spam the user
 
+scale ladder width etc with grid size
+hide ladder when hovering valid

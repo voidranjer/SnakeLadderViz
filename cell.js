@@ -50,6 +50,28 @@ class Cell {
     Cell.validNexts = newValidNexts;
   }
 
+  static drawShortcuts() {
+    // Currently hovering over a valid next position
+    if (Cell.validNexts.includes(Cell.hoveredIndex)) {
+      if (Cell.hoveredIndex in infile) {
+        const sourceCell = cells[Cell.hoveredIndex];
+        const destCell = cells[infile[Cell.hoveredIndex]];
+        drawArrowWithTip(sourceCell.centerX, sourceCell.centerY, destCell.centerX, destCell.centerY, "red", 20);
+      }
+
+      // Only draw shortcuts from the hovered cell (avoid confusion)
+      return;
+    }
+
+    // otherwise, draw all shortcuts
+    for (let i in infile) {
+      const sourceCell = cells[i];
+      const destCell = cells[infile[i]];
+
+      drawArrowWithTip(sourceCell.centerX, sourceCell.centerY, destCell.centerX, destCell.centerY, "red", 10);
+    }
+  }
+
   static drawSearchPath() {
     if (Cell.searchPath.length == 0) return;
 
@@ -173,17 +195,6 @@ class Cell {
     return Cell.validNexts.includes(this.index);
   }
 
-  drawShortcuts() {
-    if (this.index in infile) {
-      // for (let i of infile[this.index]) {
-      //   const destCell = cells[i];
-      //   drawArrowWithTip(this.centerX, this.centerY, destCell.centerX, destCell.centerY, this.isInSearchPath() || this.isHovering() ? "green" : "red", 25);
-      // }
-      const destCell = cells[infile[this.index]];
-      drawArrowWithTip(this.centerX, this.centerY, destCell.centerX, destCell.centerY, this.isInSearchPath() || this.isHovering() ? "green" : "red", 25);
-    }
-  }
-
   drawNextArrow() {
     if (this.index == N * N) return;
     const destCell = cells[this.index + 1];
@@ -229,8 +240,6 @@ class Cell {
   }
 
   drawOverlay() {
-    this.drawShortcuts();
-
     // Visited cells
     if (this.clickedOnce) {
       fill("blue");
