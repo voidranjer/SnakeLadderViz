@@ -51,6 +51,7 @@ class Cell {
   }
 
   handleClick() {
+    // Targets only the cell being hovered (other cells should not execute this function)
     if (!this.isHovering()) return;
 
     // This cell is already in the search path and it's not the last element
@@ -59,9 +60,22 @@ class Cell {
       return;
     }
 
-    Cell.searchPath.push(this.index);
+    // We're taking a ladder/snake
     if (this.index in infile) {
+      Cell.searchPath.push(this.index);
       Cell.searchPath.push(infile[this.index]);
+    }
+
+    // No ladder/snake, just a normal move
+    else {
+      const lastCell = cells[Cell.searchPath[Cell.searchPath.length - 1]];
+      let currentIndex = lastCell.index;
+      // Follow proper search path shape
+      while (currentIndex != this.index) {
+        if (currentIndex > this.index) currentIndex--;
+        else currentIndex++;
+        Cell.searchPath.push(currentIndex);
+      }
     }
   }
 
@@ -81,7 +95,7 @@ class Cell {
       if (this.index == targetIndex) return true;
 
       // Account for ladders/snakes
-      if (targetIndex in infile && this.index == infile[targetIndex]) return true;
+      // if (targetIndex in infile && this.index == infile[targetIndex]) return true;
     }
 
     return false;
@@ -160,7 +174,7 @@ class Cell {
     }
 
     // Draw outgoing arrows from newest position
-    if (this.index == Cell.searchPath[Cell.searchPath.length - 1]) this.drawOutgoingArrows();
+    // if (this.index == Cell.searchPath[Cell.searchPath.length - 1]) this.drawOutgoingArrows();
 
     // Draw outgoing arrows on hovering valid next positions
     if (this.isValidNextPosition()) {
