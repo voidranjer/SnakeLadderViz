@@ -145,8 +145,6 @@ class Cell {
     // Stop drawing floating line if the newest cell is the last cell
     if (Cell.searchPath[Cell.searchPath.length - 1] == N * N) {
       // window.alert("Well done! You get a candy :>");
-      window.open("https://www.youtube.com/watch?v=dQw4w9WgXcQ?autoplay=1&mute=1", "_blank");
-      Cell.resest();
       return;
     }
 
@@ -199,6 +197,9 @@ class Cell {
     }
 
     Cell.updateValidNexts();
+
+    // deleteme
+    if (this.index == 2) window.open("https://www.youtube.com/watch?v=dQw4w9WgXcQ?autoplay=1&mute=1", "_blank");
   }
 
   isHovering() {
@@ -251,6 +252,7 @@ class Cell {
     textSize(12);
     text(this.index, this.x + 20, this.y + 20);
 
+    // On hover
     if (this.isHovering()) {
       fill(0, 0, 255);
       text(`${this.i}, ${this.j}`, this.x + this.squareWidth - 20, this.y + 20);
