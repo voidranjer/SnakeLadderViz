@@ -23,6 +23,13 @@ class Cell {
     if (Cell.searchPath.length == 1) Cell.updateValidNexts();
   }
 
+  static reset() {
+    Cell.searchPath = [1];
+    Cell.validNexts = [];
+    Cell.hoveredIndex = -1;
+    Cell.updateValidNexts();
+  }
+
   static indexToIJ(index) {
     if (index < 1 || index > N * N) {
       // Index out of bounds
@@ -111,7 +118,7 @@ class Cell {
         strokeWeight(3);
         stroke("blue");
       }
-      circle(centerX, centerY, 25);
+      circle(centerX, centerY, 25 * (10 / N));
     }
 
     // Draw search path
@@ -130,8 +137,7 @@ class Cell {
     if (Cell.searchPath[Cell.searchPath.length - 1] == N * N) {
       // window.alert("Well done! You get a candy :>");
       window.open("https://www.youtube.com/watch?v=dQw4w9WgXcQ?autoplay=1&mute=1", "_blank");
-      Cell.searchPath = [1];
-      Cell.updateValidNexts();
+      Cell.resest();
       return;
     }
 

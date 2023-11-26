@@ -1,7 +1,7 @@
 const DIE_SIZE = 6;
 let N = 1;
 let infile = {};
-const cells = [];
+let cells = [];
 
 function init() {
   document.getElementById("submitBtn").onclick = loadInfile;
@@ -32,27 +32,21 @@ function loadInfile() {
   const lines = raw.trim().split("\n");
 
   // Extract the first line as the number of pairs (n)
-  const n = parseInt(lines[0], 10);
-  N = n;
+  N = parseInt(lines[0], 10);
 
-  // Initialize an object to store the pairs
-  const pairsObject = {};
+  // Reset infile
+  infile = {};
 
   // Loop through the remaining lines to extract pairs
-  for (let i = 1; i < lines.length; i++) {
-    // Split each line into two numbers
-    const [key, value] = lines[i].trim().split(" ").map(Number);
+  for (let line of lines) {
+    const keyAndValue = line.trim().split(" ").map(Number);
 
-    // Add the pair to the object
-    pairsObject[key] = value;
+    if (keyAndValue.length == 2) {
+      // Add the pair to the object
+      const [key, value] = keyAndValue;
+      infile[key] = value;
+    }
   }
 
-  infile = pairsObject;
-
-  // Log the result (you can do whatever you want with the object)
-  // console.log("Number of Pairs:", n);
-  // console.log("Pairs Object:", pairsObject);
-
-  // Return the result if needed
-  // return { n, pairsObject };
+  resetSketch();
 }
