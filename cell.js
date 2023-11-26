@@ -1,4 +1,5 @@
 class Cell {
+  static cells = [];
   static searchPath = [1];
   static validNexts = [];
   static hoveredIndex = -1;
@@ -6,7 +7,7 @@ class Cell {
   constructor(index) {
     this.index = index;
 
-    const { i, j } = Cell.indexToIJ(index);
+    const { i, j } = indexToIJ(index);
     this.i = i;
     this.j = j;
 
@@ -24,23 +25,31 @@ class Cell {
   }
 
   static reset() {
+    Cell.cells = [];
     Cell.searchPath = [1];
     Cell.validNexts = [];
     Cell.hoveredIndex = -1;
     Cell.updateValidNexts();
+
+    const dummy = new Cell(1);
+    Cell.cells.push(dummy);
+
+    for (let i = 0; i < N * N; i++) {
+      Cell.cells.push(new Cell(i + 1));
+    }
   }
 
-  static indexToIJ(index) {
-    if (index < 1 || index > N * N) {
-      // Index out of bounds
-      return null;
+  static drawAll() {
+    for (let cell of Cell.cells) {
+      cell.draw();
     }
 
-    // Convert the 1D index to 2D coordinates
-    const i = Math.floor((index - 1) / N);
-    const j = (index - 1) % N;
+    for (let cell of Cell.cells) {
+      cell.drawOverlay();
+    }
 
-    return { i, j };
+    Cell.drawShortcuts();
+    Cell.drawSearchPath();
   }
 
   static updateValidNexts() {
@@ -61,8 +70,8 @@ class Cell {
     // Currently hovering over a valid next position
     if (Cell.validNexts.includes(Cell.hoveredIndex)) {
       if (Cell.hoveredIndex in infile) {
-        const sourceCell = cells[Cell.hoveredIndex];
-        const destCell = cells[infile[Cell.hoveredIndex]];
+        const sourceCell = Cell.cells[Cell.hoveredIndex];
+        const destCell = Cell.cells[infile[Cell.hoveredIndex]];
         drawArrowWithTip(sourceCell.centerX, sourceCell.centerY, destCell.centerX, destCell.centerY, "red", 20);
       }
 
@@ -72,8 +81,8 @@ class Cell {
 
     // otherwise, draw all shortcuts
     for (let i in infile) {
-      const sourceCell = cells[i];
-      const destCell = cells[infile[i]];
+      const sourceCell = Cell.cells[i];
+      const destCell = Cell.cells[infile[i]];
 
       drawArrowWithTip(sourceCell.centerX, sourceCell.centerY, destCell.centerX, destCell.centerY, "red", 10);
     }
@@ -82,8 +91,8 @@ class Cell {
   static drawSearchPath() {
     if (Cell.searchPath.length == 0) return;
 
-    const hoveredCell = cells[Cell.hoveredIndex];
-    const lastCell = cells[Cell.searchPath[Cell.searchPath.length - 1]];
+    const hoveredCell = Cell.cells[Cell.hoveredIndex];
+    const lastCell = Cell.cells[Cell.searchPath[Cell.searchPath.length - 1]];
 
     // If currently hovering over a valid next position:
     if (Cell.validNexts.includes(Cell.hoveredIndex)) {
@@ -108,7 +117,7 @@ class Cell {
 
     // Draw valid nexts
     for (let index of Cell.validNexts) {
-      const { centerX, centerY } = cells[index];
+      const { centerX, centerY } = Cell.cells[index];
 
       stroke("black");
       strokeWeight(1);
@@ -127,7 +136,7 @@ class Cell {
     beginShape();
     for (let index of Cell.searchPath) {
       strokeWeight(3);
-      const { centerX, centerY } = cells[index];
+      const { centerX, centerY } = Cell.cells[index];
       vertex(centerX, centerY);
     }
     endShape();
@@ -147,7 +156,7 @@ class Cell {
     // while (currentIndex != Cell.hoveredIndex) {
     //   if (currentIndex > Cell.hoveredIndex) currentIndex--;
     //   else currentIndex++;
-    //   const { centerX, centerY } = cells[currentIndex];
+    //   const { centerX, centerY } = Cell.cells[currentIndex];
     //   vertex(centerX, centerY);
     // }
     // // vertex(mouseX, mouseY);
@@ -170,7 +179,7 @@ class Cell {
     // We're taking a ladder/snake
     if (this.index in infile) {
       const destIndex = infile[this.index];
-      const destCell = cells[destIndex];
+      const destCell = Cell.cells[destIndex];
 
       Cell.searchPath.push(this.index);
       Cell.searchPath.push(destIndex);
@@ -206,7 +215,7 @@ class Cell {
 
   drawNextArrow() {
     if (this.index == N * N) return;
-    const destCell = cells[this.index + 1];
+    const destCell = Cell.cells[this.index + 1];
     drawArrowWithTip(this.centerX, this.centerY, destCell.centerX, destCell.centerY, "blue", 5);
   }
 
@@ -215,7 +224,7 @@ class Cell {
       const destIndex = this.index + i;
       if (destIndex > N * N) break;
 
-      const destCell = cells[destIndex];
+      const destCell = Cell.cells[destIndex];
 
       drawArrowWithTip(this.centerX, this.centerY, destCell.centerX, destCell.centerY, "green", 5);
     }

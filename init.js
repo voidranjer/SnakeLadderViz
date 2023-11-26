@@ -1,7 +1,6 @@
 const DIE_SIZE = 6;
 let N = 1;
 let infile = {};
-let cells = [];
 
 function init() {
   document.getElementById("submitBtn").onclick = loadInfile;
@@ -49,4 +48,17 @@ function loadInfile() {
   }
 
   resetSketch();
+}
+
+function indexToIJ(index) {
+  if (index < 1 || index > N * N) {
+    // Index out of bounds
+    return null;
+  }
+
+  // Convert the 1D index to 2D coordinates
+  const i = Math.floor((index - 1) / N);
+  const j = (index - 1) % N;
+
+  return { i, j };
 }

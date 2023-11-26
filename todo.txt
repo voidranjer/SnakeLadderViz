@@ -9,3 +9,5 @@ hide ladder when hovering valid
 
 load from file
 input validation
+
+split cell file into 2 (search path, valid nexts should be in seperate class)
