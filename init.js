@@ -6,19 +6,9 @@ function init() {
   document.getElementById("submitBtn").onclick = loadInfile;
 
   document.getElementById("myTextArea").value = `10
-8 52
-6 80
-26 42
-2 72
-51 19
-39 11
-37 29
-81 3
-59 5
-79 23
-53 7
-43 33
-77 21
+4 36
+52 29
+79 68
 `;
 
   loadInfile();
